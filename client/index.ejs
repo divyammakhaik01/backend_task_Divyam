@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <div >
+        <form class="row g-3 note-form">
+          <div class="col-auto">
+            <input
+              type="text"
+              class="form-control input"
+              id="inputPassword2"
+              placeholder="Enter Something.."
+            />
+          </div>
+
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3 submit">
+              SUBMIT
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="notes-list">
+          <a href="http://localhost:8080/fetchAllTasks">Goto Notes</a>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------------------------------------------------------------------------- -->
+
+    <script src="index.js"></script>
+
+    <!-- socket.io CDN-->
+    <script
+      src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+      integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Socketio Connection -->
+    <script>
+      let socket = io.connect("http://localhost:8080");
+      socket.on("connect_error", (err) => {});
+
+      // on connect
+      socket.on("connect", () => {
+        console.log("connected with socket ", socket.id);
+      });
+
+//       socket.on("update_notes" , (res)=>{
+//     console.log(res);
+// })      
+    </script>
+  </body>
+</html>
