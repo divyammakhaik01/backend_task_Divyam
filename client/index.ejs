@@ -16,7 +16,7 @@
               type="text"
               class="form-control input"
               id="inputPassword2"
-              placeholder="Enter Something.."
+              placeholder="Enter something.."
             />
           </div>
 
@@ -28,7 +28,9 @@
         </form>
       </div>
       <div class="notes-list">
-          <a href="http://localhost:8080/fetchAllTasks">Goto Notes</a>
+        <span class="inner-element"></span>
+          <!-- <button class="submit">Submit</button> -->
+          <!-- <a href="http://localhost:8080/fetchAllTasks">Goto Notes</a> -->
       </div>
     </div>
 
@@ -45,6 +47,9 @@
 
     <!-- Socketio Connection -->
     <script>
+
+      let innerElement = document.getElementsByClassName('inner-element')[0];
+      let NotesList = document.getElementsByClassName('notes-list')[0];
       let socket = io.connect("http://localhost:8080");
       socket.on("connect_error", (err) => {});
 
@@ -53,9 +58,29 @@
         console.log("connected with socket ", socket.id);
       });
 
-//       socket.on("update_notes" , (res)=>{
-//     console.log(res);
-// })      
+  //       socket.on("start",  (data)=>{
+  //         let Data = JSON.parse(data)
+
+  // for(let i = 0 ; i < Data.length ; i++){
+  //   console.log(Data[i])
+  //   let newElement = document.createElement('div')
+  //   newElement.innerHTML = Data[i].text
+    
+  //   document.getElementsByClassName('inner-element')[0].appendChild(newElement)
+  // }         
+  //       })
+
+      socket.on("updateNotes" , (data)=>{
+        console.log(data)
+        let Data = JSON.parse(data)
+        console.log(Data)
+          let newElement = document.createElement('div')
+          newElement.innerHTML = Data.text
+          
+          document.getElementsByClassName('inner-element')[0].appendChild(newElement)
+      })
+
+
     </script>
   </body>
 </html>

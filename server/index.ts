@@ -85,30 +85,37 @@ const server = app.listen(Number(PORT), () => {
 
 let io  = new Server(server);
 
-io.on("connect", (socket ) => {
+io.on("connect", async(socket ) => {
+  const updatedData = await backend_tasks_Divyam.find();
+  io.emit("start" , JSON.stringify(updatedData))
   console.log(socket.id);
+  
   socket.on("add", async (msg : string) => {
+
     const cnt = await backend_tasks_Divyam.count();
+    console.log("message  " , msg )
 
     let res;
     if (cnt+1 > 50) {
+     
       if (isRedisAvailable) {
         // flush redis
         isRedisAvailable = false;
         client.del("backend_task_divyam");
         console.log("redis flushed !!");
       }
+      
       res = await backend_tasks_Divyam.create({ text: msg });
+
     } else {
       // store in mongoDB
       res = await  backend_tasks_Divyam.create({ text: msg });
-
+      console.log("++++++++++++++++++++++++++  ")
       // store in redis
       client.lPush("backend_task_divyam", JSON.stringify(msg));
     }
-    // io.emit("update_notes" , res)
-
-    // store in DB
+    // const updatedData = await backend_tasks_Divyam.find();
+    io.emit("updateNotes" , JSON.stringify(res))
   });
 
 
