@@ -13,7 +13,13 @@
     <div>
 
         <%= Count%>
-        <%= List%>
+        <% var pVal = (List) %>
+
+        <ul>
+            <% pVal.forEach(function(lis) { %>
+                <li><%= lis %> </li>
+            <% }); %>
+        </ul>
         
     </div>
     

@@ -1,16 +1,16 @@
 require("dotenv").config();
 
-const socket = require("socket.io");
-const express = require("express");
-const db = require("./config/db");
-const backend_tasks_Divyam = require("./model/store");
-const { init_redis, client } = require("./config/redis");
-const path = require('path');
-const { json } = require("express");
+import express from 'express';
+import { Application , Request , Response }  from "express";
+import  {Server}  from "socket.io";
+import db from "./config/db";
+import backend_tasks_Divyam from "./model/store";
+import { init_redis, client } from "./config/redis";
+import path from 'path';
 
-const app = express();
+const app : Application = express();
 
-const PORT = process.env.PORT || 5500;
+const PORT : any = process.env.PORT || 5500;
 
 app.use(express.static("../client"));
 
@@ -19,10 +19,9 @@ let isRedisAvailable = true;
 app.set('views' ,path.join(__dirname , '../client'))
 app.set('view engine' , 'ejs')
 
-
 // Routes
 
-app.get("/", (req, res) => {
+app.get("/", (req : Request, res : Response) => {
   return res.render("index")
   // res.json({
   //   response: "OK",
@@ -34,7 +33,8 @@ app.get("/fetchAllTasks", async (req, res) => {
 
   // res.render("index")
 
-  let result, count;
+  let result: any;
+  let count : any;
   try {
     if (!isRedisAvailable) {
       //
@@ -45,7 +45,7 @@ app.get("/fetchAllTasks", async (req, res) => {
       count = await backend_tasks_Divyam.count();
     }
 
-    let send = []
+    let send : Number [] = []
 
     for(let i = 0 ; i < result.length ; i++){
       send.push(result[i].text)
@@ -75,7 +75,7 @@ app.get("/fetchAllTasks", async (req, res) => {
 
 // create server
 
-const server = app.listen(PORT, () => {
+const server = app.listen(Number(PORT), () => {
   console.log(`server is runnnig at PORT ${PORT} `);
   db();
   init_redis();
@@ -83,11 +83,11 @@ const server = app.listen(PORT, () => {
 
 // socket IO init
 
-let io = socket(server);
+let io  = new Server(server);
 
-io.on("connect", (socket) => {
+io.on("connect", (socket ) => {
   console.log(socket.id);
-  socket.on("add", async (msg) => {
+  socket.on("add", async (msg : string) => {
     const cnt = await backend_tasks_Divyam.count();
 
     let res;
@@ -101,7 +101,7 @@ io.on("connect", (socket) => {
       res = await backend_tasks_Divyam.create({ text: msg });
     } else {
       // store in mongoDB
-      res = await backend_tasks_Divyam.create({ text: msg });
+      res = await  backend_tasks_Divyam.create({ text: msg });
 
       // store in redis
       client.lPush("backend_task_divyam", JSON.stringify(msg));
