@@ -21,11 +21,19 @@ app.set('view engine' , 'ejs')
 
 // Routes
 
-app.get("/", (req : Request, res : Response) => {
-  return res.render("index")
-  // res.json({
-  //   response: "OK",
-  // });
+app.get("/", async(req : Request, res : Response) => {
+
+  // 
+
+  let data  = await backend_tasks_Divyam.find();
+  let count = await backend_tasks_Divyam.count();
+
+  console.log(count)
+  
+  return res.render("index" , {
+    data : JSON.stringify(data) ,
+    count : (count)
+  })
 });
 
 app.get("/fetchAllTasks", async (req, res) => {
@@ -55,21 +63,9 @@ app.get("/fetchAllTasks", async (req, res) => {
         Count: count,
         List: JSON.stringify(result),
     } )
-
-    // return res.json({
-    //   status: "true",
-    //   message: {
-    //     Count: count,
-    //     List: result,
-    //   },
-    // });
     
   } catch (error) {
     return res.render("index")
-    // return res.json({
-    //   status: "false",
-    //   message: error,
-    // });
   }
 });
 
@@ -86,14 +82,12 @@ const server = app.listen(Number(PORT), () => {
 let io  = new Server(server);
 
 io.on("connect", async(socket ) => {
-  const updatedData = await backend_tasks_Divyam.find();
-  io.emit("start" , JSON.stringify(updatedData))
+ 
   console.log(socket.id);
   
   socket.on("add", async (msg : string) => {
 
     const cnt = await backend_tasks_Divyam.count();
-    console.log("message  " , msg )
 
     let res;
     if (cnt+1 > 50) {
@@ -110,11 +104,9 @@ io.on("connect", async(socket ) => {
     } else {
       // store in mongoDB
       res = await  backend_tasks_Divyam.create({ text: msg });
-      console.log("++++++++++++++++++++++++++  ")
       // store in redis
       client.lPush("backend_task_divyam", JSON.stringify(msg));
     }
-    // const updatedData = await backend_tasks_Divyam.find();
     io.emit("updateNotes" , JSON.stringify(res))
   });
 

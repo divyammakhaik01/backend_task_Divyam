@@ -4,33 +4,47 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Document</title>
+    
+    
   </head>
 
   <body>
-    <div>
-      <div >
-        <form class="row g-3 note-form">
-          <div class="col-auto">
-            <input
-              type="text"
-              class="form-control input"
-              id="inputPassword2"
-              placeholder="Enter something.."
-            />
-          </div>
+    <div class="flex flex-col justify-center ">
+      <div class="flex flex-col justify-center mt-8">
+        <div>
+          <form class="flex  g-3 note-form justify-center mb-8">
+            <div class="flex-col justify-center">
+              <div class="flex col-auto">
+                <input
+                  type="text"
+                  class="flex form-control input bg-blue-100 p-4 pl-8 pr-8   mb-2 "
+                  id="inputPassword2"
+                  placeholder="Enter some text here"
+                />
+              </div>
+  
+              <div class="flex rounded p-0 text-white  col-auto bg-red-600 hover:bg-red-700  cursor-pointer	">
+                <button
+                  type="submit"
+                  class="flex ml-14 font-bold text-2xl btn btn-primary mb-3 submit "
+                >
+                  SUBMIT
+                </button>
+              </div>
+            </div>
 
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary mb-3 submit">
-              SUBMIT
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="notes-list">
-        <span class="inner-element"></span>
-          <!-- <button class="submit">Submit</button> -->
-          <!-- <a href="http://localhost:8080/fetchAllTasks">Goto Notes</a> -->
+          </form>
+        </div>
+
+        <div
+          class="flex justify-center font-bold text-2xl underline decoration-pink-500 uppercase"
+        >
+          Notes
+        </div>
+
+        <div class="flex flex-col notes-list justify-center mt-4 border-t-4 border-indigo-500"></div>
       </div>
     </div>
 
@@ -47,9 +61,8 @@
 
     <!-- Socketio Connection -->
     <script>
-
-      let innerElement = document.getElementsByClassName('inner-element')[0];
-      let NotesList = document.getElementsByClassName('notes-list')[0];
+      let innerElement = document.getElementsByClassName("inner-element")[0];
+      let NotesList = document.getElementsByClassName("notes-list")[0];
       let socket = io.connect("http://localhost:8080");
       socket.on("connect_error", (err) => {});
 
@@ -58,29 +71,42 @@
         console.log("connected with socket ", socket.id);
       });
 
-  //       socket.on("start",  (data)=>{
-  //         let Data = JSON.parse(data)
-
-  // for(let i = 0 ; i < Data.length ; i++){
-  //   console.log(Data[i])
-  //   let newElement = document.createElement('div')
-  //   newElement.innerHTML = Data[i].text
-    
-  //   document.getElementsByClassName('inner-element')[0].appendChild(newElement)
-  // }         
-  //       })
-
-      socket.on("updateNotes" , (data)=>{
-        console.log(data)
-        let Data = JSON.parse(data)
-        console.log(Data)
-          let newElement = document.createElement('div')
-          newElement.innerHTML = Data.text
-          
-          document.getElementsByClassName('inner-element')[0].appendChild(newElement)
-      })
+      // add new element to submit list
 
 
+      function addNewElement(text) {
+        let newElement = document.createElement("li");
+        newElement.classList.add("list-decimal");
+        newElement.classList.add("ml-80");
+        newElement.classList.add("font-mono");
+        newElement.classList.add("underline");
+        newElement.classList.add("decoration-indigo-500");
+        newElement.innerHTML = text + "<br>";
+        NotesList.appendChild(newElement);
+      }
+
+      socket.on("updateNotes", (data) => {
+        let Data = JSON.parse(data);
+        console.log("Data " , Data)
+        addNewElement(Data.text);
+      });
+      let count = "<%-count%>";
+      let data1 = '<%-data%>';
+     
+
+      window.addEventListener("load", () => {
+        let parsedData = JSON.parse(data1);
+        console.log(parsedData)
+        let innerElementData = [];
+
+        for (let i = 0; i < parsedData.length; i++) {
+          addNewElement(parsedData[i].text);
+        }
+
+        console.log(NotesList);
+      });
+
+      //
     </script>
   </body>
 </html>

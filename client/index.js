@@ -21,15 +21,6 @@ form.addEventListener('submit' , async(event)=>{
 
     // 
 
-    // fetch notes from server
-
-    // let res = await fetch('http://localhost:8080/fetchAllTasks');
-    // let data = await res.json();
-    // console.log(data);
-
-    // for(let i = 0 ; i < data.result.length ; i++){
-        
-    // }
     
 })
 
